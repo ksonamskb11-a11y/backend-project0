@@ -113,3 +113,15 @@ we can install all npm's from npm website
 
 Note: to install cookie-parser on your project use cmd:
  - npm install cookie-parser or npm i cookie-parser
+
+
+   **DAY 4**
+  - basics of express routing
+  - intro to controllers
+  - add a healthCheck api endpoint and test it in postman
+  - intro to mongoose ORM/ODM
+       - npm install mongoose 
+       or npm i mongoose
+  - quick tour to mongodb atlas [MONOGO_DB_Cloud] and connect to db to our application
+  - set IP address 0.0.0.0/0, to run our project smoothly. Because Its IP address changes every time it runs.
+

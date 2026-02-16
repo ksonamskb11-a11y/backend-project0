@@ -281,3 +281,8 @@ app.get('/persons/:id', (req, res)=>{              // "http://localhost:4000/per
   }
 })
 
+
+// import router
+import healthCheckRouter from "./routes/healthCheck.route.js";
+// use routes
+app.use("/api/v1", healthCheckRouter);
