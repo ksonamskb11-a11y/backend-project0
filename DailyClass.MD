@@ -71,7 +71,7 @@ we can install all npm's from npm website
 **nodemon is install on day1 but changes about this (in package.json) will be on Day2.**
 - prettier intro.. and config
 - npm i prettier 
-    or npm install --save-dev prettier  
+    or npm install --save-dev prettier   [use this instead]
     and To uninstall it:  npm uninstall prettier
     To install Prettier, follow these steps:
     1. Install Prettier Locally: Run the command npm install --save-dev prettier in your project directory to install Prettier as a     development dependency. 
@@ -94,14 +94,22 @@ we can install all npm's from npm website
 
 - introduction of postman/thunder client:
     install them from/into vs code Extensions
-
+    - Note: in postman we have to create new request and can be add a folder for diffrent project in collection and it can be save like get or post or put or many-more things to reuse further like:GET:http://localhost:4000/persons/2   or 
+    POST:http://localhost:4000/user , then select body and type some code which is required to your project coding, which always written bitween{}. like:{
+                "email":"test@123",  
+                "pass":"test123"  
+            } 
+    and then click on 'Send' Button to get your project's response will be seen in Postman's Response.
 
 
 **DAY 3**
-- standard api response and errors
+- standard api-response and api-errors
 - keep the data in constants (userRolesEnum and taskStatusEnum and DB_NAME)
 - add basic middlewares and their importance
               -- express.json()
               -- urlencoded()
               -- cookieParser()
               -- express.static()
+
+Note: to install cookie-parser on your project use cmd:
+ - npm install cookie-parser or npm i cookie-parser
