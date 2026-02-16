@@ -19,9 +19,14 @@ const subTodoSchema = new Schema(
     dueDate: {
       type: Date,
       message: "Task must be completed before Due-Date.",
+      // required:[true, 'Todo must be completed before duedate'],
     },
+    subTodos:{
+      type: Schema.Types.ObjectId,
+      ref: 'SubTodo',
+    }
   },
-  { timestemps: true },
+  { timestemps: true }        // timestamps is use -to save Schema Created_At and Updated_At time records
 );
 
 export const SubTodo = mongoose.model("SubTodo", subTodoSchema);
