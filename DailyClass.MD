@@ -70,10 +70,31 @@ we can install all npm's from npm website
         or npm i nodemon
 **nodemon is install on day1 but changes about this (in package.json) will be on Day2.**
 - prettier intro.. and config
+- npm i prettier 
+    or npm install --save-dev prettier  
+    and To uninstall it:  npm uninstall prettier
+    To install Prettier, follow these steps:
+    1. Install Prettier Locally: Run the command npm install --save-dev prettier in your project directory to install Prettier as a     development dependency. 
+    2. Create Configuration Files: Optionally, create a .prettierrc file for configuration and a .prettierignore file to specify    files or directories to ignore. 
+    3. Initialize Your Project: If you haven't already, initialize your project with npm init to create a package.json file. 
+    These steps will set up Prettier in your codebase effectively.
+    OR
+    install--> Prettier - Code formatter 
+    (Prettier Formatter for Visual Studio Code)
+    Prettier is an opinionated code formatter. It enforces a consistent style by parsing your code and re-printing it with its own rules that take the maximum line length into account, wrapping code when necessary.
 - dot env intro.. and config
     .env used to store sensitive data/info - to keep it private 
-- CORS importance and configutation
-- introduction of postman/thunder client in vs-code
+    - npm install dotenv --save
+    or npm i dotenv
+- CORS importance and configutation 
+    - npm install cors
+    or npm i cors
+    Cross-Origin Resource Sharing (CORS) is a security feature that allows servers to specify which origins are permitted to access their resources. It is essential for enabling secure cross-origin requests in web applications.
+    you can configure CORS in a Node.js backend using the cors middleware.
+
+- introduction of postman/thunder client:
+    install them from/into vs code Extensions
+
 
 
 **DAY 3**
