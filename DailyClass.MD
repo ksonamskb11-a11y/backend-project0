@@ -125,3 +125,13 @@ Note: to install cookie-parser on your project use cmd:
   - quick tour to mongodb atlas [MONOGO_DB_Cloud] and connect to db to our application
   - set IP address 0.0.0.0/0, to run our project smoothly. Because Its IP address changes every time it runs.
 
+
+  **DAY 5**
+- MONGO DB recap
+- IP  whitelisting 
+- data modeling with mongoose (practice models)
+    - Data Model → Conceptual framework for how data is stored and related.
+    - Data Module → Implementation unit that contains or manages data in an application or system.
+    - Schema → A schema in a Database Management System (DBMS) is a blueprint or structure that defines how data is organized, stored, and related within a database. It includes tables, fields, relationships, constraints, and other database objects. Below is an example of a schema for an e-commerce application. Example: This schema includes entities such as Customers, Products, Orders, and Order_Items.
+- DataBase Cluster → A database cluster is a collection of interconnected databases or servers that work together to improve performance, scalability, and availability of data management systems. 
+- A database cluster refers to a group of multiple database servers (or nodes) that operate as a single system. Instead of relying on a single server to handle all data storage and processing tasks, a database cluster distributes the workload across multiple servers. This setup enhances the system's ability to manage larger volumes of data and higher numbers of simultaneous requests, ensuring that the database remains responsive and available even under heavy load. 
