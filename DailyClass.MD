@@ -2,7 +2,10 @@
 [ - To install react in your project Note: [vite-project(React) is only for FrontEnd project(Seprate Folder), so you can install it later(When you need it)]
     npm create vite@latest ]
 - fresh backend project setup
-    npm init [use for Nodejs application initiate]
+    npm init -y [use for Nodejs application initiate]
+    * All in one line-Terminal-cmd:
+    - npm i express mongoose nodemon dotenv cors
+    
     npm run dev
     npm install express --save [install express package]
 - understanding folder structure
@@ -49,7 +52,12 @@
   "scripts": {
     "dev": "node ./src/index.js"},
 **DAY 1.1**
-- For 1st time to add ur git/React files into github use below commands-->  
+- For 1st time to add ur git/React files into github use below commands--> 
+- 1st install git and github: select folder where you want to install it:
+    - git init
+then check terminal to git version by cmd:-> 
+    - git --version
+then use these: 
   cmd 1 - git add .
   cmd 2 - git commit -m "message" // message should have a usefull/meaningfull name 
         (use above 2 commands one by one )
@@ -135,3 +143,22 @@ Note: to install cookie-parser on your project use cmd:
     - Schema → A schema in a Database Management System (DBMS) is a blueprint or structure that defines how data is organized, stored, and related within a database. It includes tables, fields, relationships, constraints, and other database objects. Below is an example of a schema for an e-commerce application. Example: This schema includes entities such as Customers, Products, Orders, and Order_Items.
 - DataBase Cluster → A database cluster is a collection of interconnected databases or servers that work together to improve performance, scalability, and availability of data management systems. 
 - A database cluster refers to a group of multiple database servers (or nodes) that operate as a single system. Instead of relying on a single server to handle all data storage and processing tasks, a database cluster distributes the workload across multiple servers. This setup enhances the system's ability to manage larger volumes of data and higher numbers of simultaneous requests, ensuring that the database remains responsive and available even under heavy load. 
+
+**day 6**
+- understanding mvc architecture
+- cons of mvc
+- what industry follows
+
+**day 7**
+- mongo db crud operations
+
+
+**day 8**
+- make a .gitkeep file in folder images in public folder in your main project
+- install bcrypt
+    -  npm i bcrypt
+- starting with our auth module
+- unserstanding User schema for our project
+- hash the password with pre hooks
+- intro to mongoose methods with (isPasswordCorrect method)
+
