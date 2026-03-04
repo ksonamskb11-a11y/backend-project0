@@ -162,3 +162,7 @@ Note: to install cookie-parser on your project use cmd:
 - hash the password with pre hooks
 - intro to mongoose methods with (isPasswordCorrect method)
 
+**day 9**
+- understanding tokens with jwt in theory
+- implementing access and refresh token
+

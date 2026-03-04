@@ -10,35 +10,35 @@ const userSchema = new Schema(
             },
             default: {
                 url: 'https://placehold.co/200x200',
-                localPath: String,
+                localPath: '',
             },
         },
         fullName: {
             type: String,
             required: true,
-            min: 3,
-            max: [50, 'Name should be less than 50 characters'],
+            minlength: 3,
+            maxlength: [50, 'Name should be less than 50 characters'],
         },
         userName: {
             type: String,
             required: true,
-            min: 3,
-            max: [50, 'Name should be less than 50 characters'],
+            minlength: 3,
+            maxlength: [50, 'Name should be less than 50 characters'],
             index: true,
-            lowerCase: true,
+            lowercase: true,
         },
         email: {
             type: String,
             required: true,
-            lowerCase: true,
+            lowercase: true,
             unique: true,
         },
         password: {
             type: String,
             required: [true, 'password is required'],
             trim: true,
-            min: 4,
-            max: 30,
+            minlength: 4,
+            maxlength: 30,
         },
         isEmailVerified: {
             type: Boolean,
@@ -72,6 +72,10 @@ userSchema.pre("save",async function () {
    this.password = await bcrypt.hash(this.password,salt);
 })
 
+// compare the password
+userSchema.methods.isPasswordCorrect = async function (incomingPassword) {
+    return  bcrypt.compare(incomingPassword,this.password)
+}
 
 const User = mongoose.model('User', userSchema);
 
