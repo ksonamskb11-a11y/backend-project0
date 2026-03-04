@@ -174,3 +174,17 @@ install "mailgen"-to generate a mail and "nodemailer"-to trigger/send a mail
     - npm i mailgen 
     - npm i nodemailer
 
+- install http-status-codes - to get http's codes
+    - npm i http-status-codes
+
+- implementing access and refresh token
+
+**day 10**
+- tokens implementation
+
+**day 11**
+- understanding how to send mail in node.js
+
+**day 12**
+- how to register a user (production grade)
+

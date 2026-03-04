@@ -19,5 +19,8 @@ app.use(cors({origin:process.env.ORIGIN}));  //allows servers to specify which o
 
 // import router
 import healthCheckRouter from "./routes/healthCheck.route.js";
+import authRouter from './routes/auth.router.js';
+
 // use routes
 app.use("/api/v1", healthCheckRouter);
+app.use("/api/v1/auth",authRouter);

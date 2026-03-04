@@ -11,7 +11,7 @@ var mailGenerator = new Mailgen({
     },
 });
 
-const userVerificationEmailMailContent = ({ name, verificationLink }) => {
+const userVerificationEmailContent = ({ name, verificationLink }) => {
     try {
         const email = {
             body: {
@@ -40,4 +40,4 @@ const userVerificationEmailMailContent = ({ name, verificationLink }) => {
     }
 };
 
-export { userVerificationEmailMailContent };
+export { userVerificationEmailContent };
