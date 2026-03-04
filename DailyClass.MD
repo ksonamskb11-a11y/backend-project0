@@ -170,3 +170,7 @@ Note: to install cookie-parser on your project use cmd:
 - install uuid
     - npm i uuid
 
+install "mailgen"-to generate a mail and "nodemailer"-to trigger/send a mail 
+    - npm i mailgen 
+    - npm i nodemailer
+
