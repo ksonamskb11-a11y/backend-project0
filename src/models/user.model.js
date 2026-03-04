@@ -1,5 +1,7 @@
-import mongoose, { Schema } from 'mongoose';
-import bcrypt from "bcrypt";
+import mongoose, { Schema } from 'mongoose'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import { v4 as uuidv4 } from 'uuid'
 
 const userSchema = new Schema(
     {
@@ -61,22 +63,89 @@ const userSchema = new Schema(
         },
     },
     { timestamps: true }
-);
+)
 
 // hash the password
-userSchema.pre("save",async function () {
-   if (!this.isModified('password')) {
-     return 
-   }
-   const salt = await bcrypt.genSalt(10);
-   this.password = await bcrypt.hash(this.password,salt);
+userSchema.pre('save', async function () {
+    if (!this.isModified('password')) {
+        return
+    }
+    const salt = await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
 })
 
 // compare the password
 userSchema.methods.isPasswordCorrect = async function (incomingPassword) {
-    return  bcrypt.compare(incomingPassword,this.password)
+    return bcrypt.compare(incomingPassword, this.password)
 }
 
-const User = mongoose.model('User', userSchema);
+// generate access token => jwt - payload - data {} , secret key , expiresIn
+userSchema.methods.generateAccessToken = async function () {
+    try {
+        const token = await jwt.sign(
+            {
+                id: this._id,
+                email: this.email,
+                userName: this.userName,
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            {
+                expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+            }
+        )
 
-export default User;
+        return token
+    } catch (error) {
+        console.log(error, 'error generating AT')
+    }
+}
+
+// refresh token
+userSchema.methods.generateRefreshToken = async function () {
+    try {
+        const token = await jwt.sign(
+            {
+                id: this._id,
+            },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+        )
+        return token
+    } catch (error) {
+        console.log(error, 'error generating refresh token')
+    }
+}
+
+// email verification token
+userSchema.methods.generateEmailVerificationToken = async function () {
+    try {
+        // generate a random token
+        const rawToken = uuidv4()
+        // hash token
+        this.emailVerificationToken = await bcrypt.hash(rawToken, 10)
+        this.emailVerificationTokenExpiry = Date.now() + 24 * 60 * 60 * 1000
+
+        return rawToken
+    } catch (error) {
+        console.log(error, 'error generating email verification token')
+    }
+}
+
+// forgot pass token
+userSchema.methods.generateForgotPasswordToken = async function () {
+    try {
+        // generate a random token
+        const rawToken = uuidv4()
+        // hash token
+        this.forgotPasswordToken = await bcrypt.hash(rawToken, 10)
+        this.forgotPasswordTokenExpiry = Date.now() + 20 * 60 * 1000
+
+        return rawToken
+    } catch (error) {
+        console.log(error, 'error generating forgot password token')
+    }
+}
+
+const User = mongoose.model('User', userSchema)
+
+export default User

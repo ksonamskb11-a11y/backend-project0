@@ -165,4 +165,8 @@ Note: to install cookie-parser on your project use cmd:
 **day 9**
 - understanding tokens with jwt in theory
 - implementing access and refresh token
+- install jwt
+    - npm i jsonwebtoken
+- install uuid
+    - npm i uuid
 
