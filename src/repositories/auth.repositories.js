@@ -1,6 +1,4 @@
-import User from '../models/user.modal.js';
-import { ApiError } from '../utils/api-error.js';
-import { StatusCodes } from 'http-status-codes';
+import User from '../models/user.model.js';
 
 const createUser = async ({ fullName, userName, email, password }) => {
     const user = await User.create({
@@ -14,9 +12,6 @@ const createUser = async ({ fullName, userName, email, password }) => {
 
 const findUserById = async (id) => {
     const user = await User.findById(id);
-    if (!user) {
-        throw new ApiError(StatusCodes.NOT_FOUND, 'user not found');
-    }
     return user;
 };
 

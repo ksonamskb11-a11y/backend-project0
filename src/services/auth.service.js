@@ -10,7 +10,7 @@ import { userVerificationEmailContent } from '../utils/mail.templates.js';
 import { sendEmail } from './mailer.js';
 
 const registerUserService = async ({ fullName, userName, email, password }) => {
-    const existingUser = await findUserByEmailOrUserName(email);
+    const existingUser = await findUserByEmailOrUserName(email,userName);
     if (existingUser) {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'user already exists');
     }
@@ -23,6 +23,8 @@ const registerUserService = async ({ fullName, userName, email, password }) => {
     });
 
     console.log('user created');
+
+    // const createdUser = await User.findById(user._id);
 
     const rawToken = await user.generateEmailVerificationToken();
     user.emailVerificationToken = rawToken;

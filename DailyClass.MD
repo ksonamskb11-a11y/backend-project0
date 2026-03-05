@@ -181,6 +181,7 @@ install "mailgen"-to generate a mail and "nodemailer"-to trigger/send a mail
 
 **day 10**
 - tokens implementation
+    -refresh_token(daily new i_card_provider) access-token(daily new i_card) ko renew kr k dega
 
 **day 11**
 - understanding how to send mail in node.js
