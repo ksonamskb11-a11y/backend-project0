@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ApiError } from '../utils/api-error.js';
 import { registerUserService } from '../services/auth.service.js';
 import { ApiResponse } from '../utils/api-response.js';
+import { findUserById } from "../repositories/auth.repositories.js";
 
 const registerUserHandler = async (req, res) => {
     try {
@@ -20,12 +21,18 @@ const registerUserHandler = async (req, res) => {
             password,
         });
 
+        const createdUser = await findUserById(user._id);
+
+        if (!createdUser) {
+           throw new ApiError(404,"user not found after registration");
+        }
+
         return res
             .status(StatusCodes.OK)
             .json(
                 new ApiResponse(
                     StatusCodes.OK,
-                    user,
+                    createdUser,
                     "user created successfully and a verification mail is sent to the user's email"
                 )
             );

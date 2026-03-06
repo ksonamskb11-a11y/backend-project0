@@ -189,3 +189,122 @@ install "mailgen"-to generate a mail and "nodemailer"-to trigger/send a mail
 **day 12**
 - how to register a user (production grade)
 
+**day 13**
+- install zod_middleware
+    - npm i zod 
+    - Zod is a TypeScript-first validation library. Define a schema and parse some data with it. You'll get back a strongly typed, validated result.
+    - Before you can do anything else, you need to define a schema. For the purposes of this guide, we'll use a simple object schema.
+    - import * as z from "zod";
+        const Player = z.object({
+        username: z.string(),
+        xp: z.number(),
+        });
+    - Note — If your schema uses certain asynchronous APIs like async refinements or transforms, you'll need to use the .parseAsync() method instead.
+    **Note- to know more search on 'zod npm'
+- we can use express_middlewares but zod is better(used everywhere in small companies too)
+- intro to validators 
+- validate the user register endpoint
+- we have to set validators' error as well 
+- regex [RegExp]
+    - A regular expression (often abbreviated as regex or regexp) is a sequence of characters that defines a search pattern. This pattern can be used for various string operations such as searching, matching, and replacing text. Regular expressions are widely used in programming languages, text editors, and search engines.
+    - Basic Syntax
+        1. Literals: Characters that match themselves. For example, the regex abc matches the string "abc".
+        2. Metacharacters: Special characters that have specific meanings. Some common metacharacters include: .: Matches any single character except a newline. *: Matches zero or more occurrences of the preceding element. +: Matches one or more occurrences of the preceding element. ?: Matches zero or one occurrence of the preceding element. ^: Matches the start of a string. $: Matches the end of a string. []: Matches any one of the characters inside the brackets. |: Acts as a logical OR between patterns. () : Groups patterns together and captures the matched text^2^.
+    - Examples
+        1. Matching Digits: The regex \d matches any digit. For example, \d+ matches one or more digits.
+        2. Matching Words: The regex \w+ matches one or more word characters (letters, digits, and underscores).
+        3. Matching Whitespace: The regex \s matches any whitespace character (spaces, tabs, etc.).
+        4. Character Classes: [a-z] matches any lowercase letter, and [A-Z] matches any uppercase letter.
+    - Advanced Features
+        1. Quantifiers: Specify the number of times an element should be matched. For example, a{2,4} matches "aa", "aaa", or "aaaa".
+        2. Lookahead and Lookbehind: Assertions that match a pattern only if it is (or isn't) followed or preceded by another pattern. For example, (?<=\d)abc matches "abc" only if it is preceded by a digit.
+        3. Backreferences: Allow you to refer to previously matched groups. For example, (\w+)\s\1 matches a word followed by a space and the same word again.
+    - Practical Applications
+        1. Regular expressions are used in various applications, including:
+        2. Text Processing: Searching and replacing text in documents and code.
+        3. Data Validation: Validating input formats such as email addresses, phone numbers, and URLs.
+        4. Syntax Highlighting: Highlighting code syntax in text editors.
+        5. Web Scraping: Extracting data from web pages.
+    - Example:
+        1. for Email: .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,"Invalid email format")
+        - Explanation:
+            1. Regex Pattern:
+                1. - /^:  ^ means start of the string.
+                2. - [a-zA-Z0-9._%+-]+
+                    This represents the username (local part) of the email.
+                    Allowed characters: Symbol	Meaning
+                        a-z	lowercase letters
+                        A-Z	uppercase letters
+                        0-9	numbers
+                        .	dot
+                        _	underscore
+                        %	percent
+                        +	plus
+                        -	hyphen
+                        + means one or more characters must exist. 
+                3. - @ : This matches the @ symbol.Every valid email must contain.
+                4. - [a-zA-Z0-9.-]+
+                    This represents the domain name.
+                    Allowed characters: Symbol	Meaning
+                        a-z	lowercase letters
+                        A-Z	uppercase letters
+                        0-9	numbers
+                        .	dot
+                        -	hyphen
+                5. - \.  :  \. means a literal dot .
+                    Because in regex . normally means any character, so we escape it with \.
+                    This represents the dot before the domain extension.
+                6. - [a-zA-Z]{2,}
+                        This represents the domain extension (TLD).
+                        {2,} means minimum 2 letters.
+                7. - $
+                    $ means end of the string
+                    So the entire email must match this pattern.
+            - Final Email Format Rule: Valid format:
+                Requirements:
+                    ✅ Username with allowed characters
+                    ✅ @ symbol
+                    ✅ Domain name
+                    ✅ .
+                    ✅ Extension with at least 2 letters
+            2. trim(): removes accidental spaces before/after the email.
+            3. "Type check" ensures only strings are processed.
+    - Key Points:
+        - "Regex" ensures stricter control than z.string().email() (e.g., no spaces, valid TLD).
+        - "safeParse" prevents exceptions and returns structured error messages.
+        - Works "both in backend and frontend" for consistent validation.
+    - Example: Password Regex Validation Pattern in react/backend
+        2. for Password: .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        - Explanation:
+            1. (?=.*[a-z]): Ensures at least one lowercase letter.
+            2. (?=.*[A-Z]): Ensures at least one uppercase letter.
+            3. .{8,}: Ensures the password is at least 8 characters long.
+        - Additional Considerations:
+            If you want to include more rules like digits or special characters:
+            1. Add (?=.*\d) for at least one digit.
+            2. Add (?=.*[@$!%*?&]) for at least one special character.
+        - Explanation_2:
+                - 1. ^ means start of the string. So the password checking starts from the beginning.
+                - 2. (?=.*[a-z]) : This is a positive lookahead. 
+                    .* → any characters
+                    [a-z] → at least one lowercase letter. So the password must contain at least one lowercase letter.
+                - 3. (?=.*[A-Z]):  [A-Z] → at least one uppercase letter. So password must contain at least one uppercase letter.
+                - 4. (?=.*\d) : \d → digit (0–9) .So password must contain at least one number.
+                - 5. (?=.*[@$!%*?&]): This ensures at least one special character.
+                - 6. [A-Za-z\d@$!%*?&]{8,}: This part defines what characters are allowed and the length.
+                    {8,} means:
+                        ➡ Minimum 8 characters
+                        ➡ No maximum limit
+                - 7.  $ means end of the string. So the entire password must match this pattern/rule.
+            --> **Final Password Rules**
+                A valid password must contain:
+                ✅ At least 1 lowercase letter
+                ✅ At least 1 uppercase letter
+                ✅ At least 1 number
+                ✅ At least 1 special character (@$!%*?&)
+                ✅ Minimum 8 characters
+        - "Real-time validation" updates the error message as the user types.
+        - "Backend safety": You should revalidate the password on the backend using the same regex to prevent bypassing client-side checks.
+        - error: console.log("Password must include uppercase, lowercase, a number, a special character, and be at least 8 characters long.");
+            
+

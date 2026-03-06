@@ -1,7 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import {
     createUser,
-    findUserByEmail,
     findUserByEmailOrUserName,
     saveUser,
 } from '../repositories/auth.repositories.js';
@@ -24,7 +23,7 @@ const registerUserService = async ({ fullName, userName, email, password }) => {
 
     console.log('user created');
 
-    // const createdUser = await User.findById(user._id);
+
 
     const rawToken = await user.generateEmailVerificationToken();
     user.emailVerificationToken = rawToken;
