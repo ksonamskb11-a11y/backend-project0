@@ -307,4 +307,7 @@ install "mailgen"-to generate a mail and "nodemailer"-to trigger/send a mail
         - "Backend safety": You should revalidate the password on the backend using the same regex to prevent bypassing client-side checks.
         - error: console.log("Password must include uppercase, lowercase, a number, a special character, and be at least 8 characters long.");
             
+**day 14**
+- verify user 
+- login
 

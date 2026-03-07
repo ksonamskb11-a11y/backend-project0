@@ -40,6 +40,29 @@ const assignRefreshToken = async (userId, refreshToken) => {
     return user;
 };
 
+const findAllValidUsersWithValidVerificationToken = async () => {
+    const users = await User.find({
+        isEmailVerified: false,
+        emailVerificationTokenExpiry: { $gt: Date.now() },
+    });
+
+    return users;
+};
+
+const verifyUser = async (userId) => {
+    const verifiedUser = await User.findByIdAndUpdate(userId, {
+        $set: {
+            isEmailVerified: true,
+        },
+        $unset: {
+            emailVerificationToken: null,
+            emailVerificationTokenExpiry: null,
+        },
+    });
+
+    return verifiedUser;
+};
+
 export {
     createUser,
     findUserByEmail,
@@ -47,4 +70,6 @@ export {
     saveUser,
     findUserById,
     assignRefreshToken,
+    findAllValidUsersWithValidVerificationToken,
+    verifyUser,
 };
