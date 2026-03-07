@@ -3,6 +3,8 @@ import {
     createUser,
     findUserByEmailOrUserName,
     saveUser,
+    findAllValidUsersWithValidVerificationToken,
+    verifyUser
 } from '../repositories/auth.repositories.js';
 import { ApiError } from '../utils/api-error.js';
 import { userVerificationEmailContent } from '../utils/mail.templates.js';
