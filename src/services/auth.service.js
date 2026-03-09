@@ -27,7 +27,7 @@ const registerUserService = async ({ fullName, userName, email, password }) => {
     console.log('user created');
 
     const rawToken = await user.generateEmailVerificationToken();
-    user.emailVerificationToken = rawToken;
+    // user.emailVerificationToken = rawToken;
 
     await saveUser(user);
 
@@ -57,7 +57,7 @@ const verifyUserService = async (rawToken) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'no users found');
     }
 
-    const comparision = await Promise.all(
+    const comparisons = await Promise.all(
         usersWithToken.map(async (user) => {
             const isMatched = await bcrypt.compare(
                 rawToken,
@@ -67,7 +67,13 @@ const verifyUserService = async (rawToken) => {
         })
     );
 
-    const matchedUser = comparision.find((result) => result !== null);
+    const matchedUser = comparisons.find((result) => result !== null);
+
+     console.log(matchedUser);
+
+    if (!matchedUser) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "invalid or expired token");
+    }
 
     if (matchedUser.isEmailVerified) {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'email already verified');

@@ -1,8 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 import { ApiError } from '../utils/api-error.js';
-import { registerUserService } from '../services/auth.service.js';
+import {
+    registerUserService,
+    verifyUserService,
+} from '../services/auth.service.js';
 import { ApiResponse } from '../utils/api-response.js';
-import { findUserById } from "../repositories/auth.repositories.js";
+import { findUserById } from '../repositories/auth.repositories.js';
 
 const registerUserHandler = async (req, res) => {
     try {
@@ -24,14 +27,14 @@ const registerUserHandler = async (req, res) => {
         const createdUser = await findUserById(user._id);
 
         if (!createdUser) {
-           throw new ApiError(404,"user not found after registration");
+            throw new ApiError(404, 'user not found after registration');
         }
 
         return res
-            .status(StatusCodes.OK)
+            .status(StatusCodes.CREATED)
             .json(
                 new ApiResponse(
-                    StatusCodes.OK,
+                    StatusCodes.CREATED,
                     createdUser,
                     "user created successfully and a verification mail is sent to the user's email"
                 )
@@ -42,4 +45,25 @@ const registerUserHandler = async (req, res) => {
     }
 };
 
-export { registerUserHandler };
+const verifyUserHandler = async (req, res) => {
+    try {
+        const { rawToken } = req.params;
+        await verifyUserService(rawToken);
+        return res.status(200).json(
+            new ApiResponse(
+                StatusCodes.OK,
+                {},
+                'User verification successful',
+            )
+        );
+    } catch (error) {
+        console.log(error, 'error in verify user handler');
+        throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'error in verify user handler',
+            { error }
+        );
+    }
+};
+
+export { registerUserHandler, verifyUserHandler };
