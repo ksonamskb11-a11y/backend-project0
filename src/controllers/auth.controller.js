@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { ApiError } from '../utils/api-error.js';
 import {
+    loginUserService,
     registerUserService,
     verifyUserService,
 } from '../services/auth.service.js';
@@ -49,13 +50,15 @@ const verifyUserHandler = async (req, res) => {
     try {
         const { rawToken } = req.params;
         await verifyUserService(rawToken);
-        return res.status(200).json(
-            new ApiResponse(
-                StatusCodes.OK,
-                {},
-                'User verification successful',
-            )
-        );
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    {},
+                    'User verification successful'
+                )
+            );
     } catch (error) {
         console.log(error, 'error in verify user handler');
         throw new ApiError(
@@ -66,4 +69,44 @@ const verifyUserHandler = async (req, res) => {
     }
 };
 
-export { registerUserHandler, verifyUserHandler };
+const loginUserHandler = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const { user, accessToken, refreshToken } = await loginUserService({
+            email,
+            password,
+        });
+        return res
+            .status(StatusCodes.OK)
+            .cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: true,
+            })
+            .cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: true,
+            })
+            .json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    {
+                        user,
+                        accessToken,
+                        refreshToken,
+                    },
+                    'user logged in successfully'
+                )
+            );
+    } catch (error) {
+        console.log(error.message, 'error in login user handler');
+        throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'error in login user handler',
+            {
+                error,
+            }
+        );
+    }
+};
+
+export { registerUserHandler, verifyUserHandler, loginUserHandler };
