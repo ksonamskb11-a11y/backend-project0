@@ -63,6 +63,21 @@ const verifyUser = async (userId) => {
     return verifiedUser;
 };
 
+const logout = async (userId) => {
+    const user = await User.findByIdAndUpdate(
+        userId,
+        {
+            $unset: {
+                refreshToken: null,
+            },
+        },
+        {
+            new: true,
+        }
+    );
+    return user;
+};
+
 export {
     createUser,
     findUserByEmail,
@@ -72,4 +87,5 @@ export {
     assignRefreshToken,
     findAllValidUsersWithValidVerificationToken,
     verifyUser,
+    logout,
 };

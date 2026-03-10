@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ApiError } from '../utils/api-error.js';
 import {
     loginUserService,
+    logoutUserService,
     registerUserService,
     verifyUserService,
 } from '../services/auth.service.js';
@@ -48,7 +49,7 @@ const registerUserHandler = async (req, res) => {
 
 const verifyUserHandler = async (req, res) => {
     try {
-        const { rawToken } = req.params;
+        const { rawToken } = req.params; // get Token from URL
         await verifyUserService(rawToken);
         return res
             .status(200)
@@ -60,7 +61,7 @@ const verifyUserHandler = async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log(error, 'error in verify user handler');
+        console.log(error, 'Error in Verify_User_Handler');
         throw new ApiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             'error in verify user handler',
@@ -109,4 +110,59 @@ const loginUserHandler = async (req, res) => {
     }
 };
 
-export { registerUserHandler, verifyUserHandler, loginUserHandler };
+const getCurrentUserHandler = async (req, res) => {
+    try {
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    req.user,
+                    'current user fetched successfully'
+                )
+            );
+    } catch (error) {
+        console.log(error, 'error in current_User_handler');
+        throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'error in current user handler'
+        );
+    }
+};
+
+const logoutUserHandler = async (req, res) => {
+    try {
+        await logoutUserService(req.user._id);
+        return res
+            .status(StatusCodes.ok)
+            .cookie('accessToken', null, {
+                httpOnly: true,
+                secure: true,
+            })
+            .cookie('refreshToken', null, {
+                httpOnly: true,
+                secure: true,
+            })
+            .json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    {},
+                    'user logged_out_successfully'
+                )
+            );
+    } catch (error) {
+        console.log(error, 'error logging_out_user');
+        throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'error in logout_Handler'
+        );
+    }
+};
+
+export {
+    registerUserHandler,
+    verifyUserHandler,
+    loginUserHandler,
+    getCurrentUserHandler,
+    logoutUserHandler
+};
