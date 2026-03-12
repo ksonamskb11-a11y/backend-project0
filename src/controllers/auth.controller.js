@@ -5,6 +5,9 @@ import {
     logoutUserService,
     registerUserService,
     verifyUserService,
+    forgotPasswordRequestService,
+    forgotPasswordService,
+    changeCurrentPasswordService
 } from '../services/auth.service.js';
 import { ApiResponse } from '../utils/api-response.js';
 import { findUserById } from '../repositories/auth.repositories.js';
@@ -99,7 +102,7 @@ const loginUserHandler = async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log(error.message, 'error in login user handler');
+        console.log(error.message, 'error in Login_User_Handler');
         throw new ApiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             'error in login user handler',
@@ -134,7 +137,7 @@ const logoutUserHandler = async (req, res) => {
     try {
         await logoutUserService(req.user._id);
         return res
-            .status(StatusCodes.ok)
+            .status(StatusCodes.OK)
             .cookie('accessToken', null, {
                 httpOnly: true,
                 secure: true,
@@ -159,10 +162,89 @@ const logoutUserHandler = async (req, res) => {
     }
 };
 
+const forgotPasswordRequestHandler = async (req, res) => {
+    try {
+        const { email } = req.body;
+        await forgotPasswordRequestService(email);
+        return res
+            .status(StatusCodes.OK)
+            .json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    {},
+                    'A verification mail has been sent to your email address'
+                )
+            );
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'error in forgot password request handler',
+            {
+                error,
+            }
+        );
+    }
+};
+
+const forgotPasswordHandler = async (req, res) => {
+    try {
+        const { rawToken } = req.params;
+        const { newPassword } = req.body;
+        await forgotPasswordService(rawToken, newPassword);
+        return res
+            .status(StatusCodes.OK)
+            .json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    {},
+                    'Password reset successfully'
+                )
+            );
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'error in forgot password handler',
+            {
+                error,
+            }
+        );
+    }
+};
+
+const changeCurrentPasswordHandler = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        await changeCurrentPasswordService(req.user, oldPassword, newPassword);
+        return res
+            .status(StatusCodes.OK)
+            .json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    {},
+                    'Password changed successfully'
+                )
+            );
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'error in change current password handler',
+            {
+                error,
+            }
+        );
+    }
+};
+
 export {
     registerUserHandler,
     verifyUserHandler,
     loginUserHandler,
     getCurrentUserHandler,
-    logoutUserHandler
+    logoutUserHandler,
+    forgotPasswordRequestHandler,
+    forgotPasswordHandler,
+    changeCurrentPasswordHandler,
 };

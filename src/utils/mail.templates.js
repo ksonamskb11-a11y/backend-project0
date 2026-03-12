@@ -40,4 +40,33 @@ const userVerificationEmailContent = ({ name, verificationLink }) => {
     }
 };
 
-export { userVerificationEmailContent };
+const forgotPasswordEmailContent = ({ name, verificationLink }) => {
+    try {
+        const email = {
+            body: {
+                name,
+                intro: 'You have requested to reset your password.',
+                action: {
+                    instructions:
+                        'To reset your password please click on the link below:',
+                    button: {
+                        color: '#f2501fff', // Optional action button color
+                        text: 'Reset your password',
+                        link: verificationLink,
+                    },
+                },
+                outro: 'If you did not request a password reset, please ignore this email or reply to let us know.',
+            },
+        };
+
+        const html = mailGenerator.generate(email);
+        const plainText = mailGenerator.generatePlaintext(email);
+
+        return { html, plainText };
+    } catch (error) {
+        console.log(error, 'error generating mail template');
+        throw error;
+    }
+};
+
+export { userVerificationEmailContent, forgotPasswordEmailContent };

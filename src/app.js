@@ -16,7 +16,6 @@ app.use(cookieParser());  // instead of local storage, to prevent 'data' theft
 app.use(cors({origin:process.env.ORIGIN}));  //allows servers to specify which origins are permitted to access their resources
 
 
-
 // import router
 import healthCheckRouter from "./routes/healthCheck.route.js";
 import authRouter from "./routes/auth.router.js";

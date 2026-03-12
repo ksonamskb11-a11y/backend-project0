@@ -78,6 +78,38 @@ const logout = async (userId) => {
     return user;
 };
 
+const findUsersWithValidResetToken = async () => {
+    const users = await User.find({
+        forgotPasswordToken: { $ne: null },
+        forgotPasswordTokenExpiry: { $gt: Date.now() },
+    });
+    return users;
+};
+
+const resetPassword = async (id, newPassword) => {
+    const user = await User.findByIdAndUpdate(id, {
+        $set: { password: newPassword },
+        $unset: {
+            forgotPasswordToken: null,
+            forgotPasswordTokenExpiry: null,
+        },
+    });
+    return user;
+};
+
+const changeCurrentPassword = async (id, newPassword) => {
+    const user = await User.findByIdAndUpdate(
+        id,
+        {
+            $set: { password: newPassword },
+        },
+        {
+            new: true,
+        }
+    );
+    return user;
+};
+
 export {
     createUser,
     findUserByEmail,
@@ -88,4 +120,7 @@ export {
     findAllValidUsersWithValidVerificationToken,
     verifyUser,
     logout,
+    findUsersWithValidResetToken,
+    resetPassword,
+    changeCurrentPassword,
 };

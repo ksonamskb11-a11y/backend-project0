@@ -4,13 +4,16 @@ import {
     findUserByEmailOrUserName,
     findUserByEmail,
     findUserById,
-    saveUser,
+    findUsersWithValidResetToken,
     findAllValidUsersWithValidVerificationToken,
+    changeCurrentPassword,
+    saveUser,
     verifyUser,
     logout,
+    resetPassword
 } from '../repositories/auth.repositories.js';
 import { ApiError } from '../utils/api-error.js';
-import { userVerificationEmailContent } from '../utils/mail.templates.js';
+import { userVerificationEmailContent, forgotPasswordEmailContent  } from '../utils/mail.templates.js';
 import { sendEmail } from './mailer.js';
 import bcrypt from 'bcrypt';
 
@@ -125,7 +128,7 @@ const loginUserService = async ({ email, password }) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'invalid email id');
     }
 
-    const isPasswordCorrect = user.isPasswordCorrect(password);
+    const isPasswordCorrect = await user.isPasswordCorrect(password);
     if (!isPasswordCorrect) {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'invalid password');
     }
@@ -156,9 +159,96 @@ const logoutUserService = async (userId) => {
     };
 };
 
+const forgotPasswordRequestService = async (email) => {
+    if (!email) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'email is required');
+    }
+    const user = await findUserByEmail(email);
+    if (!user) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'user not found');
+    }
+
+    const rawToken = await user.generateForgotPasswordToken();
+    await saveUser(user);
+
+    const verificationLink = `http://localhost:${process.env.PORT}/api/v1/auth/forgot-password/request/${rawToken}`;
+
+    const { html } = forgotPasswordEmailContent({
+        name: user.fullName,
+        verificationLink,
+    });
+
+    await sendEmail({
+        userEmail: user.email,
+        subject: 'forgot password request',
+        html: html,
+    });
+
+    return {
+        message: 'A verification mail has been sent to your email address',
+    };
+};
+
+const forgotPasswordService = async (rawToken, newPassword) => {
+    if (!rawToken) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'token not found');
+    }
+    if (!newPassword) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'new password is required');
+    }
+
+    const usersWithToken = await findUsersWithValidResetToken();
+
+    if (!usersWithToken.length) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'no user found');
+    }
+    const comparision = await Promise.all(
+        usersWithToken.map(async (user) => {
+            const isMatched = await bcrypt.compare(
+                rawToken,
+                user.forgotPasswordToken
+            );
+            return isMatched ? user : null;
+        })
+    );
+
+    const matchedUser = comparision.find((result) => result !== null);
+    if (!matchedUser) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'user not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await resetPassword(matchedUser._id, hashedPassword);
+
+    return {
+        message: 'Password reset successfully',
+    };
+};
+
+const changeCurrentPasswordService = async (user, oldPassword, newPassword) => {
+    if (!user) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'user not found');
+    }
+    const isOldPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+    if (!isOldPasswordCorrect) {
+        throw new ApiError(
+            StatusCodes.BAD_REQUEST,
+            'old password is incorrect'
+        );
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await changeCurrentPassword(user._id, hashedPassword);
+    return { message: 'Password changed successfully' };
+};
 export {
     registerUserService,
     verifyUserService,
     loginUserService,
     logoutUserService,
+    forgotPasswordRequestService,
+    forgotPasswordService,
+    changeCurrentPasswordService,
 };
