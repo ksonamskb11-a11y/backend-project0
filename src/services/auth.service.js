@@ -10,10 +10,13 @@ import {
     saveUser,
     verifyUser,
     logout,
-    resetPassword
+    resetPassword,
 } from '../repositories/auth.repositories.js';
 import { ApiError } from '../utils/api-error.js';
-import { userVerificationEmailContent, forgotPasswordEmailContent  } from '../utils/mail.templates.js';
+import {
+    userVerificationEmailContent,
+    forgotPasswordEmailContent,
+} from '../utils/mail.templates.js';
 import { sendEmail } from './mailer.js';
 import bcrypt from 'bcrypt';
 
@@ -71,7 +74,7 @@ const verifyUserService = async (rawToken) => {
     }
 
     const usersWithToken = await findAllValidUsersWithValidVerificationToken();
-    console.log(usersWithToken);
+    //console.log(usersWithToken);
 
     if (!usersWithToken.length) {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'no users found');
@@ -83,13 +86,10 @@ const verifyUserService = async (rawToken) => {
                 rawToken,
                 user.emailVerificationToken
             );
-            console.log(
-                `user.emailVerificationToken:`,
-                user.emailVerificationToken
-            );
-            console.log(`rawToken:                  :`, rawToken);
-            console.log(`isMatched:`, isMatched);
-            //      console.log(`user/usersWithToken: `,user);
+            // console.log( `user.emailVerificationToken:`, user.emailVerificationToken);
+            // console.log(`rawToken:                  :`, rawToken);
+            // console.log(`isMatched:`, isMatched);
+            // console.log(`user/usersWithToken: `,user);
             return isMatched ? user : null;
         })
     );
@@ -98,7 +98,7 @@ const verifyUserService = async (rawToken) => {
     // const matchedUser = comparisons.find(Boolean);
     const matchedUser = comparisons.filter(Boolean)[0];
 
-    console.log('comparisons:', comparisons);
+    // console.log('comparisons:', comparisons);
     console.log(`Matched_User:`, matchedUser);
 
     if (!matchedUser) {
@@ -189,7 +189,7 @@ const forgotPasswordRequestService = async (email) => {
     };
 };
 
-const forgotPasswordService = async (rawToken, newPassword) => {
+const resetForgotPasswordService = async (rawToken, newPassword) => {
     if (!rawToken) {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'token not found');
     }
@@ -243,12 +243,13 @@ const changeCurrentPasswordService = async (user, oldPassword, newPassword) => {
     await changeCurrentPassword(user._id, hashedPassword);
     return { message: 'Password changed successfully' };
 };
+
 export {
     registerUserService,
     verifyUserService,
     loginUserService,
     logoutUserService,
     forgotPasswordRequestService,
-    forgotPasswordService,
+    resetForgotPasswordService,
     changeCurrentPasswordService,
 };

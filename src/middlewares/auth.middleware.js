@@ -5,8 +5,8 @@ import { findUserById } from '../repositories/auth.repositories.js';
 
 export const verifyJwt = async (req, res, next) => {
     try {
-        const token = req.cookies?.accessToken || req.header['Authorization']?.replace("Bearer ","")
-        console.log(token);
+        const token = req.cookies?.accessToken || req.header['Authorization']?.replace("Bearer ","");
+        // console.log(token);
         if (!token) {
             throw new ApiError(StatusCodes.UNAUTHORIZED, 'unauthorized: token missing');
         }
@@ -15,8 +15,7 @@ export const verifyJwt = async (req, res, next) => {
             throw new ApiError(StatusCodes.UNAUTHORIZED, 'invalid token');
         }
 
-        console.log(decodedToken);
-        
+        // console.log(decodedToken);
 
         const user = await findUserById(decodedToken.id);
         if (!user) {

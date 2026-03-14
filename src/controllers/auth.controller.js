@@ -6,8 +6,8 @@ import {
     registerUserService,
     verifyUserService,
     forgotPasswordRequestService,
-    forgotPasswordService,
-    changeCurrentPasswordService
+    resetForgotPasswordService,
+    changeCurrentPasswordService,
 } from '../services/auth.service.js';
 import { ApiResponse } from '../utils/api-response.js';
 import { findUserById } from '../repositories/auth.repositories.js';
@@ -187,11 +187,11 @@ const forgotPasswordRequestHandler = async (req, res) => {
     }
 };
 
-const forgotPasswordHandler = async (req, res) => {
+const resetForgotPasswordHandler = async (req, res) => {
     try {
         const { rawToken } = req.params;
         const { newPassword } = req.body;
-        await forgotPasswordService(rawToken, newPassword);
+        await resetForgotPasswordService(rawToken, newPassword);
         return res
             .status(StatusCodes.OK)
             .json(
@@ -205,7 +205,7 @@ const forgotPasswordHandler = async (req, res) => {
         console.log(error);
         throw new ApiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
-            'error in forgot password handler',
+            'error in forgot_password_handler',
             {
                 error,
             }
@@ -238,6 +238,60 @@ const changeCurrentPasswordHandler = async (req, res) => {
     }
 };
 
+const resendVerificationEmailHandler = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
+        }
+
+        if (user.isEmailVerified) {
+            throw new ApiError(
+                StatusCodes.BAD_REQUEST,
+                'User already verified'
+            );
+        }
+
+        const { rawToken, hashedToken, tokenExpiry } = await user.generateEmailVerificationToken();
+
+        user.emailVerificationToken = hashedToken;
+        user.emailVerificationTokenExpiry = tokenExpiry;
+
+        await saveUser(user);
+
+        const verificationLink = `http://localhost:${process.env.PORT}/api/v1/auth/verify-email/${rawToken}`;
+
+        const { html } = userVerificationEmailContent({
+            name: user.fullName,
+            verificationLink,
+        });
+
+        await sendEmail({
+            userEmail: user?.email,
+            subject: 'user re-verification email',
+            html,
+        });
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    {},
+                    'Verification email resent successfully'
+                )
+            );
+    } catch (error) {
+        console.log(error, 'Error in resend_Verification_Email_Handler');
+        throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'error in resend_Verification_Email_Handler',
+            { error }
+        );
+    }
+};
+
 export {
     registerUserHandler,
     verifyUserHandler,
@@ -245,6 +299,7 @@ export {
     getCurrentUserHandler,
     logoutUserHandler,
     forgotPasswordRequestHandler,
-    forgotPasswordHandler,
+    resetForgotPasswordHandler,
     changeCurrentPasswordHandler,
+    resendVerificationEmailHandler,
 };

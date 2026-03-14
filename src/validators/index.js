@@ -11,7 +11,7 @@ export const userRegistrationValidatorSchema = z.object({
         )
         .toLowerCase()
         .trim()
-        .min(1), 
+        .min(1),
     password: z
         .string()
         .regex(
@@ -19,10 +19,28 @@ export const userRegistrationValidatorSchema = z.object({
             'Invalid password format'
         )
         .min(5)
-        .max(50),
+        .max(60),
 });
 
 export const userLoginValidatorSchema = z.object({
-    email: z.string().email().toLowerCase().trim(), 
-    password: z.string().min(5).max(50),
+    email: z.string().email().toLowerCase().trim(),
+    password: z
+        .string()
+        .regex(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            'Invalid password format'
+        )
+        .min(5)
+        .max(60),
+});
+
+export const changePasswordValidatorSchema = z.object({
+    password: z
+        .string()
+        .regex(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            'Invalid password format'
+        )
+        .min(5)
+        .max(60),
 });
