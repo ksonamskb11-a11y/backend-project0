@@ -8,6 +8,8 @@ import {
     forgotPasswordRequestService,
     resetForgotPasswordService,
     changeCurrentPasswordService,
+    resendVerificationEmailService,
+    refreshAccessTokenService,
 } from '../services/auth.service.js';
 import { ApiResponse } from '../utils/api-response.js';
 import { findUserById } from '../repositories/auth.repositories.js';
@@ -240,38 +242,9 @@ const changeCurrentPasswordHandler = async (req, res) => {
 
 const resendVerificationEmailHandler = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
+        const { email } = req.body;
 
-        if (!user) {
-            throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
-        }
-
-        if (user.isEmailVerified) {
-            throw new ApiError(
-                StatusCodes.BAD_REQUEST,
-                'User already verified'
-            );
-        }
-
-        const { rawToken, hashedToken, tokenExpiry } = await user.generateEmailVerificationToken();
-
-        user.emailVerificationToken = hashedToken;
-        user.emailVerificationTokenExpiry = tokenExpiry;
-
-        await saveUser(user);
-
-        const verificationLink = `http://localhost:${process.env.PORT}/api/v1/auth/verify-email/${rawToken}`;
-
-        const { html } = userVerificationEmailContent({
-            name: user.fullName,
-            verificationLink,
-        });
-
-        await sendEmail({
-            userEmail: user?.email,
-            subject: 'user re-verification email',
-            html,
-        });
+        await resendVerificationEmailService(email);
 
         return res
             .status(200)
@@ -279,7 +252,7 @@ const resendVerificationEmailHandler = async (req, res) => {
                 new ApiResponse(
                     StatusCodes.OK,
                     {},
-                    'Verification email resent successfully'
+                    'A verification mail has been sent to your email address'
                 )
             );
     } catch (error) {
@@ -287,6 +260,34 @@ const resendVerificationEmailHandler = async (req, res) => {
         throw new ApiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             'error in resend_Verification_Email_Handler',
+            { error }
+        );
+    }
+};
+
+const refreshAccessTokenHandler = async (req, res) => {
+    try {
+        const token = req.cookies?.refreshToken;
+        const { accessToken, refreshToken } = await refreshAccessTokenService(token);
+        return res. status(StatusCodes.OK)
+        .cookie("accessToken",accessToken,{
+            httpOnly:true,
+            secure:true
+        })
+         .cookie("refreshToken",refreshToken,{
+            httpOnly:true,
+            secure:true
+        })
+        .json(
+            new ApiResponse(
+                StatusCodes.OK,{accessToken,refreshToken},"Access token refreshed successfully"
+            )
+        )
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'error in refresh_access_token_handler',
             { error }
         );
     }
@@ -302,4 +303,5 @@ export {
     resetForgotPasswordHandler,
     changeCurrentPasswordHandler,
     resendVerificationEmailHandler,
+    refreshAccessTokenHandler,
 };

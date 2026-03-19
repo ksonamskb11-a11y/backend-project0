@@ -9,6 +9,7 @@ import {
     resetForgotPasswordHandler,
     changeCurrentPasswordHandler,
     resendVerificationEmailHandler,
+    refreshAccessTokenHandler,
 } from '../controllers/auth.controller.js';
 import { validate } from '../middlewares/zod.middleware.js';
 import {
@@ -32,11 +33,21 @@ authRouter
 authRouter.route('/current-user').get(verifyJwt, getCurrentUserHandler);
 authRouter.route('/logout').post(verifyJwt, logoutUserHandler);
 authRouter.route('/forgot-password/request').get(forgotPasswordRequestHandler);
-authRouter.route('/reset-forgot-password/:rawToken').post(resetForgotPasswordHandler, validate(changePasswordValidatorSchema));
+authRouter
+    .route('/reset-forgot-password/:rawToken')
+    .post(resetForgotPasswordHandler, validate(changePasswordValidatorSchema));
 authRouter
     .route('/change-password')
-    .post(verifyJwt, changeCurrentPasswordHandler, validate(changePasswordValidatorSchema));
+    .post(
+        verifyJwt,
+        changeCurrentPasswordHandler,
+        validate(changePasswordValidatorSchema)
+    );
 
-authRouter.route('/resend-email-verification').post( verifyJwt, resendVerificationEmailHandler);     
+authRouter
+    .route('/resend-verification-email')
+    .post(resendVerificationEmailHandler);
+
+authRouter.route('/refresh-token').post(refreshAccessTokenHandler);
 
 export default authRouter;
